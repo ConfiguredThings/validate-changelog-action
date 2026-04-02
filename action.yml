@@ -1,0 +1,10 @@
+name: 'Validate Keep a Changelog'
+description: 'Validates that a changelog file conforms to the Keep a Changelog format'
+inputs:
+  changelog-path:
+    description: 'Path to the changelog file'
+    required: false
+    default: 'CHANGELOG.md'
+runs:
+  using: 'node22'
+  main: 'index.js'
