@@ -21,7 +21,15 @@ if (!version) {
 const candidates = version.startsWith('v') ? [version, version.slice(1)] : [version, `v${version}`];
 
 function runMdq(matcher) {
-  const result = spawnSync('mdq', [`# ^${matcher}$`, changelogPath], { encoding: 'utf8' });
+  // Anchored regex against the heading's rendered text. Headings are matched
+  // as "[version]" when there's no reference link to resolve them into a
+  // link (rendered text keeps the brackets) or as bare "version" when there
+  // is (mdq resolves the reference-style link, dropping the brackets) —
+  // optionally followed by " - <release date>" or end of heading. Anchoring
+  // on the trailing " - "/end avoids "1.1" matching "1.10".
+  const escapedMatcher = matcher.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const pattern = `^\\[?${escapedMatcher}\\]?( - |$)`;
+  const result = spawnSync('mdq', [`# /${pattern}/`, changelogPath], { encoding: 'utf8' });
   if (result.error) {
     console.error(`Failed to run mdq: ${result.error.message}`);
     process.exit(1);

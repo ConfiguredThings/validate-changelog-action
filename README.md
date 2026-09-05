@@ -8,6 +8,7 @@ A GitHub Action that validates a `CHANGELOG.md` file conforms to the [Keep a Cha
 - No manual table of contents (anchor links) before the first `## [version]` section.
 - `### ` subsections use only the approved Keep a Changelog types (`Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`), with no duplicates within a single section.
 - Every `## [version]` section has a matching `[version]: https://...` reference link at the bottom of the file.
+- Every released `## [version]` section has a trailing release date in the format `- YYYY-MM-DD` (e.g. `## [1.2.0] - 2026-04-02`); `[Unreleased]` must not have one.
 - The `[Unreleased]` reference link compares the most recent version to `HEAD` (e.g. `.../compare/v1.2.0...HEAD`).
 
 ## Usage

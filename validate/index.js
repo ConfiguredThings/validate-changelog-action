@@ -20,12 +20,12 @@ const lines = content.split('\n');
 const sections = parseSections(lines);
 const referenceLinks = parseReferenceLinks(lines);
 
-// Returns [{name, lineIndex}] for every ## [name] heading
+// Returns [{name, lineIndex, trailing}] for every ## [name] heading
 function parseSections(lines) {
-  const pattern = /^## \[(.+?)\]/;
+  const pattern = /^## \[(.+?)\](.*)$/;
   return lines.flatMap((line, i) => {
     const m = line.match(pattern);
-    return m ? [{ name: m[1], lineIndex: i }] : [];
+    return m ? [{ name: m[1], lineIndex: i, trailing: m[2] }] : [];
   });
 }
 
@@ -89,13 +89,25 @@ function validateSyntax(lines, sections, referenceLinks) {
     }
   }
 
+  // 5. Released versions must have a trailing " - YYYY-MM-DD" date; [Unreleased] must not
+  const datePattern = / - \d{4}-\d{2}-\d{2}$/;
+  for (const { name, lineIndex, trailing } of sections) {
+    if (name === 'Unreleased') {
+      if (trailing.trim() !== '') {
+        errors.push(`Line ${lineIndex + 1}: [Unreleased] must not have a trailing date, got: "${lines[lineIndex].trim()}"`);
+      }
+    } else if (!datePattern.test(trailing)) {
+      errors.push(`Line ${lineIndex + 1}: [${name}] must have a trailing release date in the format " - YYYY-MM-DD", got: "${lines[lineIndex].trim()}"`);
+    }
+  }
+
   return errors;
 }
 
 function validateSemantics(sections, referenceLinks) {
   const errors = [];
 
-  // 5. [Unreleased] reference link must diff from the most recent version tag to HEAD
+  // 6. [Unreleased] reference link must diff from the most recent version tag to HEAD
   const unreleasedUrl = referenceLinks.get('Unreleased');
   const mostRecentVersion = sections.find(s => s.name !== 'Unreleased')?.name;
   if (unreleasedUrl && mostRecentVersion) {
