@@ -1,0 +1,34 @@
+name: 'Extract Changelog Section'
+description: 'Extracts the Keep a Changelog section body for a given version, for use as GitHub release notes'
+inputs:
+  version:
+    description: 'Version to extract, e.g. a tag name. Matched with or without a leading "v" against the "## [version]" heading.'
+    required: true
+  changelog-path:
+    description: 'Path to the changelog file'
+    required: false
+    default: 'CHANGELOG.md'
+outputs:
+  notes:
+    description: 'The extracted section body, as Markdown'
+    value: ${{ steps.extract.outputs.notes }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Install mdq
+      shell: bash
+      run: |
+        curl -sL -o mdq.tar.gz https://github.com/yshavit/mdq/releases/download/v0.10.0/mdq-linux-x64.tar.gz
+        tar -xzf mdq.tar.gz
+        install -m 755 mdq /usr/local/bin/mdq
+        rm mdq.tar.gz mdq
+
+    - name: Extract section
+      id: extract
+      shell: bash
+      run: |
+        node "${{ github.action_path }}/../scripts/extract-changelog-section.js" "${{ inputs.version }}" "${{ inputs.changelog-path }}" > /tmp/changelog-notes.md
+        delimiter="$(openssl rand -hex 8)"
+        echo "notes<<$delimiter" >> "$GITHUB_OUTPUT"
+        cat /tmp/changelog-notes.md >> "$GITHUB_OUTPUT"
+        echo "$delimiter" >> "$GITHUB_OUTPUT"
