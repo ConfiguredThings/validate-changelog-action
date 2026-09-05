@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v4] - 2026-09-06
 ### Added
 - Validation that every released `## [version]` section has a trailing release date in the format `- YYYY-MM-DD`, and that `[Unreleased]` does not.
 
@@ -30,7 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial implementation of the validate-changelog action.
 
-[Unreleased]: https://github.com/ConfiguredThings/validate-changelog-action/compare/v3...HEAD
+[Unreleased]: https://github.com/ConfiguredThings/validate-changelog-action/compare/v4...HEAD
+[v4]: https://github.com/ConfiguredThings/validate-changelog-action/compare/v3...v4
 [v3]: https://github.com/ConfiguredThings/validate-changelog-action/compare/v2...v3
 [v2]: https://github.com/ConfiguredThings/validate-changelog-action/compare/v1...v2
 [v1]: https://github.com/ConfiguredThings/validate-changelog-action/releases/tag/v1
